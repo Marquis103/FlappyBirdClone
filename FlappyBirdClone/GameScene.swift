@@ -62,6 +62,11 @@ class GameScene: SKScene {
         
         bird = SKSpriteNode(texture: birdTexture)
         
+        //controlling sprites
+        //apply gravity and detect collision with other objects
+        bird.physicsBody = SKPhysicsBody(circleOfRadius: birdTexture.size().height/2)
+        bird.physicsBody!.dynamic = true
+        
         //need a location for the bird
         bird.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
         
@@ -71,10 +76,23 @@ class GameScene: SKScene {
         //add node to the screen
         self.addChild(bird)
         
+        //create another physics body which is the ground
+        //not a sprite because it doesn't have an image
+        var ground = SKNode()
+        ground.position = CGPointMake(0,0)
+        ground.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(frame.size.width, 1))
+        ground.physicsBody!.dynamic = false
+        self.addChild(ground)
+        
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        /* Called when a touch begins */
+        
+        //add impulses to objects
+        //define speed/velocity of bird
+        bird.physicsBody!.velocity = CGVectorMake(0, 0)
+        bird.physicsBody!.applyImpulse(CGVectorMake(0, 50))
 
     }
    
