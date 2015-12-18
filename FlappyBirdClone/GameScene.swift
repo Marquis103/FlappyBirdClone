@@ -11,6 +11,8 @@ import SpriteKit
 class GameScene: SKScene {
     var bird = SKSpriteNode()
     var bg = SKSpriteNode()
+    var pipe1 = SKSpriteNode()
+    var pipe2 = SKSpriteNode()
     
     override func didMoveToView(view: SKView) {
         //background texture
@@ -78,12 +80,43 @@ class GameScene: SKScene {
         
         //create another physics body which is the ground
         //not a sprite because it doesn't have an image
-        var ground = SKNode()
+        let ground = SKNode()
         ground.position = CGPointMake(0,0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(frame.size.width, 1))
         ground.physicsBody!.dynamic = false
         self.addChild(ground)
         
+        _ = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: Selector("makePipes"), userInfo: nil, repeats: true)
+        
+    }
+    
+    func makePipes() {
+        let gapHeight = bird.size.height * 4
+        
+        //create randomness to move gapHeight
+        //random number up to half the size of the user's screen
+        let movementAmount = arc4random() % UInt32(self.frame.size.height / 2)
+        
+        //limit move to be in between the top and bottom quarters of the screen
+        let pipeOffset = CGFloat(movementAmount) - self.frame.size.height / 4
+        
+        
+        //create an animation to spawn and remove pipes from the screen
+        let movePipes = SKAction.moveByX(-self.frame.size.width * 2, y: 0, duration: NSTimeInterval(self.frame.size.width / 100))
+        let removePipes = SKAction.removeFromParent()
+        let moveAndRemovePipes = SKAction.sequence([movePipes, removePipes])
+        
+        let pipeTexture = SKTexture(imageNamed: "pipe1.png")
+        let pipe1 = SKSpriteNode(texture: pipeTexture)
+        pipe1.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) + pipeTexture.size().height/2 + gapHeight / 2 + pipeOffset)
+        pipe1.runAction(moveAndRemovePipes)
+        self.addChild(pipe1)
+        
+        let pipe2Texture = SKTexture(imageNamed: "pipe2.png")
+        let pipe2 = SKSpriteNode(texture: pipe2Texture)
+        pipe2.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) - pipe2Texture.size().height/2 - gapHeight / 2 + pipeOffset)
+        pipe2.runAction(moveAndRemovePipes)
+        self.addChild(pipe2)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
