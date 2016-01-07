@@ -35,7 +35,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //set bg position
         bg.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
-        
+        bg.zPosition = -5
+      
         bg.size.height = frame.height
         
         //move background to the left so bird appears to be moving right
@@ -54,7 +55,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //x is the center of the background image
             
             bg.position = CGPoint(x: bgTexture.size().width / 2 + bgTexture.size().width * i, y: CGRectGetMidY(frame))
-            
+            bg.zPosition = -5
             bg.size.height = frame.height
             
             bg.runAction(movebgForever)
@@ -97,13 +98,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //apply gravity and detect collision with other objects
         bird.physicsBody = SKPhysicsBody(circleOfRadius: birdTexture.size().height/2)
         bird.physicsBody!.dynamic = true
-        
+      
         //need a location for the bird
         bird.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
         
         //add animation to bird sprite
         bird.runAction(makeBirdFlap)
-        
+      
+        bird.physicsBody!.allowsRotation = false
         bird.physicsBody!.categoryBitMask = ColliderType.Bird.rawValue
         bird.physicsBody!.contactTestBitMask = ColliderType.Object.rawValue
         bird.physicsBody!.collisionBitMask = ColliderType.Object.rawValue
@@ -168,6 +170,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let pipeTexture = SKTexture(imageNamed: "pipe1.png")
         let pipe1 = SKSpriteNode(texture: pipeTexture)
         pipe1.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) + pipeTexture.size().height/2 + gapHeight / 2 + pipeOffset)
+        //pipe1.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + 1000)
         pipe1.runAction(moveAndRemovePipes)
         pipe1.physicsBody = SKPhysicsBody(rectangleOfSize: pipeTexture.size())
         pipe1.physicsBody!.categoryBitMask = ColliderType.Object.rawValue
